@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.version.VersionMapper">
+    <select id="getEditionInfo" resultType="AppVersion">
+        SELECT v.versionInfo,d.valueId,v.apkFileName,a.softwareName,v.versionNo,v.versionSize,d.valueName,v.downloadLink,v.modifyDate
+FROM app_version v,app_info a,data_dictionary d WHERE d.typeName='发布状态' AND d.valueId=v.publishStatus AND  v.appId=a.id AND a.id=#{id}
+    </select>
+    <insert id="addVersion" parameterType="AppVersion" useGeneratedKeys="true" keyProperty="id">
+        insert into app_version
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="appId!=null and appId!=''">
+                appId,
+            </if>
+            <if test="versionNo!=null and versionNo!=''">
+                versionNo,
+            </if>
+            <if test="publishStatus!=null and publishStatus!=''">
+                publishStatus,
+            </if>
+            <if test="versionSize!=null and versionSize!=''">
+                versionSize,
+            </if>
+            <if test="versionInfo!=null and versionInfo!=''">
+                versionInfo,
+            </if>
+            <if test="downloadLink!=null and downloadLink!=''">
+                downloadLink,
+            </if>
+            <if test="apkFileName!=null and apkFileName!=''">
+                apkFileName,
+            </if>
+        </trim>
+        <trim prefix="value(" suffix=")" suffixOverrides=",">
+            <if test="appId!=null and appId!=''">
+                #{appId},
+            </if>
+            <if test="versionNo!=null and versionNo!=''">
+                #{versionNo},
+            </if>
+            <if test="publishStatus!=null and publishStatus!=''">
+                #{publishStatus},
+            </if>
+            <if test="versionSize!=null and versionSize!=''">
+                #{versionSize},
+            </if>
+            <if test="versionInfo!=null and versionInfo!=''">
+                #{versionInfo},
+            </if>
+            <if test="downloadLink!=null and downloadLink!=''">
+                #{downloadLink},
+            </if>
+            <if test="apkFileName!=null and apkFileName!=''">
+                #{apkFileName},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateVersion" parameterType="AppVersion">
+        UPDATE  app_version
+        <set>
+            <if test="versionNo!=null and versionNo!=''">
+                versionNo=#{versionNo},
+            </if>
+            <if test="versionSize!=null and versionSize!=''">
+                versionSize=#{versionSize},
+            </if>
+            <if test="versionInfo!=null and versionInfo!=''">
+                versionInfo=#{versionInfo},
+            </if>
+            <if test="apkFileName!=null and apkFileName!=''">
+                apkFileName=#{apkFileName},
+            </if>
+            <if test="downloadLink!=null and downloadLink!=''">
+                downloadLink=#{downloadLink},
+            </if>
+            <if test="apkLocPath!=null and apkLocPath!=''">
+                apkLocPath=#{apkLocPath},
+            </if>
+            <if test="modifyBy!=null and modifyBy!=''">
+                modifyBy=#{modifyBy},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+    <delete id="delVersion" parameterType="int">
+        delete from app_version where appId=#{id}
+    </delete>
+    <select id="getVersionById" resultType="APPVersion">
+         SELECT v.*,(SELECT d.valueName FROM data_dictionary d WHERE d.typeName='发布状态' AND v.publishStatus=d.`valueId`) AS valueName FROM app_version v WHERE v.id=#{id}
+    </select>
+    <update id="updateVersionPath" parameterType="int">
+        update app_version set downloadLink=null, apkLocPath=null where id=#{id}
+    </update>
+</mapper>
